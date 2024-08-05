@@ -8,6 +8,7 @@ tags:
   - cogvideox
   - video-generation
   - thudm
+  - text-to-video
 inference: false
 ---
 
