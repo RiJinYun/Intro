@@ -19,7 +19,7 @@ inference: false
   </div>
   <p align="center">
   <a href="https://huggingface.co/THUDM/CogVideoX-2b/blob/main/README_zh.md">📄 中文阅读</a> | 
-  <a href="https://github.com/THUDM/CogVideo">🌐 Github</a> | 
+  <a href="https://github.com/THUDM/CogVideo">🌐 Github(with PDF paper)</a> | 
   <a href="#">📜 arxiv (coming soon) </a>
 </p>
 
@@ -87,18 +87,20 @@ inference: false
 CogVideoX is an open-source video generation model that shares the same origins as [清影](https://chatglm.cn/video).
 The table below provides a list of the video generation models we currently offer, along with their basic information.
 
-| Model Name                                 | CogVideoX-2B (Current Repos)                     | 
-|--------------------------------------------|--------------------------------------------------|
-| Supported Prompt Language                  | English                                          | 
+| Model Name                                 | CogVideoX-2B (Current Repos)                  | 
+|--------------------------------------------|-----------------------------------------------|
+| Supported Prompt Language                  | English                                       | 
 | GPU Memory Required for Inference          | 36GB (will be optimized before the PR is merged) | 
-| GPU Memory Required for Fine-tuning (bs=1) | 46.2GB                                           |
-| Prompt Length                              | 226 Tokens                                       |
-| Video Length                               | 6 seconds                                        | 
-| Frames Per Second                          | 8 frames                                         | 
-| Resolution                                 | 720 * 480                                        |
-| Positional Embeddings                      | Sinusoidal                                       |
-| Quantized Inference                        | Not Supported                                    |          
-| Multi-card Inference                       | Not Supported                                    |                             
+| GPU Memory Required for Fine-tuning (bs=1) | 42GB                                          |
+| Prompt Length                              | 226 Tokens                                    |
+| Video Length                               | 6 seconds                                     | 
+| Frames Per Second                          | 8 frames                                      | 
+| Resolution                                 | 720 * 480                                     |
+| Positional Embeddings                      | Sinusoidal                                    |
+| Quantized Inference                        | Not Supported                                 |
+| Multi-card Inference                       | Not Supported                                 |
+
+**Note** Using [SAT](https://github.com/THUDM/SwissArmyTransformer) model cost 18GB for inference. Check our github.
 
 ## Quick Start 🤗
 

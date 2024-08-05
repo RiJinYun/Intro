@@ -6,7 +6,7 @@
   </div>
   <p align="center">
   <a href="https://huggingface.co/THUDM/CogVideoX-2b/blob/main/README.md">📄 Read in English</a> | 
-  <a href="https://github.com/THUDM/CogVideo">🌐 Github</a> | 
+  <a href="https://github.com/THUDM/CogVideo">🌐 Github(包含PDF论文)</a> | 
   <a href="#">📜 arxiv (即将发布) </a>
 </p>
 
@@ -77,7 +77,7 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 |---------------|---------------------|
 | 提示词语言         | English             | 
 | 推理显存消耗        | 36GB（会在PR合并之前优化)    | 
-| 微调显存消耗 (bs=1) | 46.2GB              |
+| 微调显存消耗 (bs=1) | 42GB                |
 | 提示词长度上限       | 226 Tokens          |
 | 视频生成长度        | 6 seconds           | 
 | 视频生成帧率 (每秒)   | 8 frames            | 
@@ -85,6 +85,8 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 | 位置编码          | Sinusoidal          |
 | 量化            | 不支持                 |          
 | 多卡推理          | 不支持                 |                             
+
+**Note** 使用 [SAT](https://github.com/THUDM/SwissArmyTransformer) 推理SAT版本模型仅需18G显存。欢迎前往我们的github查看。
 
 ## 快速上手 🤗
 
