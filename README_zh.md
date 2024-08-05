@@ -76,7 +76,7 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 | Model Name    | CogVideoX-2B (当前仓库) | 
 |---------------|---------------------|
 | 提示词语言         | English             | 
-| 推理显存消耗        | 21.6GB              | 
+| 推理显存消耗        | 36GB（会在PR合并之前优化)    | 
 | 微调显存消耗 (bs=1) | 46.2GB              |
 | 提示词长度上限       | 226 Tokens          |
 | 视频生成长度        | 6 seconds           | 
@@ -95,8 +95,8 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 1. 安装对应的依赖
 
 ```shell
-pip install --upgrade opencv-python transformers 
-pip install git+https://github.com/huggingface/diffusers.git@32da2e7673cfe0475a47c41b859f5fbd8bf17a40#egg=diffusers # Still in PR
+pip install --upgrade opencv-python transformers acc
+pip install git+https://github.com/huggingface/diffusers.git@878f609aa5ce4a78fea0f048726889debde1d7e8#egg=diffusers # Still in PR
 ```
 
 2. 运行代码
@@ -130,6 +130,8 @@ video = pipe(
 
 export_to_video(video, "output.mp4", fps=8)
 ```
+
+**使用单卡A100按照上述配置生成一次视频大约需要90秒**。
 
 如果您生成的模型在 MAC 默认播放器上表现为 "全绿" 无法正常观看，属于正常现象 (OpenCV保存视频问题)，仅需更换一个播放器观看。
 

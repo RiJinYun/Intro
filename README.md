@@ -87,18 +87,18 @@ inference: false
 CogVideoX is an open-source video generation model that shares the same origins as [清影](https://chatglm.cn/video).
 The table below provides a list of the video generation models we currently offer, along with their basic information.
 
-| Model Name                                 | CogVideoX-2B (Current Repos) | 
-|--------------------------------------------|------------------------------|
-| Supported Prompt Language                  | English                      | 
-| GPU Memory Required for Inference          | 21.6GB                       | 
-| GPU Memory Required for Fine-tuning (bs=1) | 46.2GB                       |
-| Prompt Length                              | 226 Tokens                   |
-| Video Length                               | 6 seconds                    | 
-| Frames Per Second                          | 8 frames                     | 
-| Resolution                                 | 720 * 480                    |
-| Positional Embeddings                      | Sinusoidal                   |
-| Quantized Inference                        | Not Supported                |          
-| Multi-card Inference                       | Not Supported                |                             
+| Model Name                                 | CogVideoX-2B (Current Repos)                     | 
+|--------------------------------------------|--------------------------------------------------|
+| Supported Prompt Language                  | English                                          | 
+| GPU Memory Required for Inference          | 36GB (will be optimized before the PR is merged) | 
+| GPU Memory Required for Fine-tuning (bs=1) | 46.2GB                                           |
+| Prompt Length                              | 226 Tokens                                       |
+| Video Length                               | 6 seconds                                        | 
+| Frames Per Second                          | 8 frames                                         | 
+| Resolution                                 | 720 * 480                                        |
+| Positional Embeddings                      | Sinusoidal                                       |
+| Quantized Inference                        | Not Supported                                    |          
+| Multi-card Inference                       | Not Supported                                    |                             
 
 ## Quick Start 🤗
 
@@ -111,7 +111,7 @@ optimizations and conversions to get a better experience.**
 
 ```shell
 pip install --upgrade opencv-python transformers 
-pip install git+https://github.com/huggingface/diffusers.git@32da2e7673cfe0475a47c41b859f5fbd8bf17a40#egg=diffusers # Still in PR
+pip install git+https://github.com/huggingface/diffusers.git@878f609aa5ce4a78fea0f048726889debde1d7e8#egg=diffusers # Still in PR
 ```
 
 2. Run the code
@@ -121,7 +121,7 @@ import torch
 from diffusers import CogVideoXPipeline
 from diffusers.utils import export_to_video
 
-prompt = "A girl ridding a bike"
+prompt = "A panda, dressed in a small, red jacket and a tiny hat, sits on a wooden stool in a serene bamboo forest. The panda's fluffy paws strum a miniature acoustic guitar, producing soft, melodic tunes. Nearby, a few other pandas gather, watching curiously and some clapping in rhythm. Sunlight filters through the tall bamboo, casting a gentle glow on the scene. The panda's face is expressive, showing concentration and joy as it plays. The background includes a small, flowing stream and vibrant green foliage, enhancing the peaceful and magical atmosphere of this unique musical performance."
 
 pipe = CogVideoXPipeline.from_pretrained(
     "THUDM/CogVideoX-2b",
@@ -145,6 +145,8 @@ video = pipe(
 
 export_to_video(video, "output.mp4", fps=8)
 ```
+
+**Using a single A100 GPU, generating a video with the above configuration takes approximately 90 seconds**
 
 If the generated model appears “all green” and not viewable in the default MAC player, it is a normal phenomenon (due to
 OpenCV saving video issues). Simply use a different player to view the video.
