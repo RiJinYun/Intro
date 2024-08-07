@@ -13,6 +13,6 @@
   "set_alpha_to_one": true,
   "snr_shift_scale": 3.0,
   "steps_offset": 0,
-  "timestep_spacing": "linspace",
+  "timestep_spacing": "trailing",
   "trained_betas": null
 }
