@@ -73,18 +73,17 @@
 
 CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生成模型。下表战展示目前我们提供的视频生成模型列表，以及相关基础信息。
 
-| Model Name    | CogVideoX-2B (当前仓库) | 
-|---------------|---------------------|
-| 提示词语言         | English             | 
-| 推理显存消耗        | 36GB                | 
-| 微调显存消耗 (bs=1) | 42GB                |
-| 提示词长度上限       | 226 Tokens          |
-| 视频生成长度        | 6 seconds           | 
-| 视频生成帧率 (每秒)   | 8 frames            | 
-| 视频生成分辨率       | 720 * 480           |
-| 位置编码          | Sinusoidal          |
-| 量化            | 不支持                 |          
-| 多卡推理          | 不支持                 |                             
+| 模型名                 | CogVideoX-2B                         | 
+|---------------------|--------------------------------------|
+| 提示词语言               | English                              | 
+| 单GPU推理 (FP-16) 显存消耗 | 23.9GB                               | 
+| 多GPU推理 (FP-16) 显存消耗 | 20GB minimum per GPU using diffusers |                                                                                                            
+| 微调显存消耗 (bs=1)       | 42GB                                 |
+| 提示词长度上限             | 226 Tokens                           |
+| 视频长度                | 6 seconds                            | 
+| 帧率（每秒）              | 8 frames                             | 
+| 视频分辨率               | 720 * 480                            |
+| 量化推理                | 不支持                                  |          
 
 **Note** 使用 [SAT](https://github.com/THUDM/SwissArmyTransformer) 推理SAT版本模型仅需18G显存。欢迎前往我们的github查看。
 
@@ -112,7 +111,9 @@ prompt = "A panda, dressed in a small, red jacket and a tiny hat, sits on a wood
 pipe = CogVideoXPipeline.from_pretrained(
     "THUDM/CogVideoX-2b",
     torch_dtype=torch.float16
-).to("cuda")
+)
+
+pipe.enable_model_cpu_offload()
 
 prompt_embeds, _ = pipe.encode_prompt(
     prompt=prompt,

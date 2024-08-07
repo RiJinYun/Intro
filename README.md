@@ -88,18 +88,17 @@ inference: false
 CogVideoX is an open-source video generation model that shares the same origins as [清影](https://chatglm.cn/video).
 The table below provides a list of the video generation models we currently offer, along with their basic information.
 
-| Model Name                                 | CogVideoX-2B (Current Repos) | 
-|--------------------------------------------|------------------------------|
-| Supported Prompt Language                  | English                      | 
-| GPU Memory Required for Inference          | 36GB                         | 
-| GPU Memory Required for Fine-tuning (bs=1) | 42GB                         |
-| Prompt Length                              | 226 Tokens                   |
-| Video Length                               | 6 seconds                    | 
-| Frames Per Second                          | 8 frames                     | 
-| Resolution                                 | 720 * 480                    |
-| Positional Embeddings                      | Sinusoidal                   |
-| Quantized Inference                        | Not Supported                |
-| Multi-card Inference                       | Not Supported                |
+| Model Name                                | CogVideoX-2B                         | 
+|-------------------------------------------|--------------------------------------|
+| Prompt Language                           | English                              | 
+| Single GPU  Inference (FP16)              | 23.9GB                               | 
+| Multi GPUs Inference (FP16)               | 20GB minimum per GPU using diffusers |
+| GPU Memory Required for Fine-tuning(bs=1) | 40GB                                 |
+| Prompt Max  Length                        | 226 Tokens                           |
+| Video Length                              | 6 seconds                            | 
+| Frames Per Second                         | 8 frames                             | 
+| Resolution                                | 720 * 480                            |
+| Quantized Inference                       | Not Supported                        |          
 
 **Note** Using [SAT](https://github.com/THUDM/SwissArmyTransformer) model cost 18GB for inference. Check our github.
 
@@ -128,7 +127,9 @@ prompt = "A panda, dressed in a small, red jacket and a tiny hat, sits on a wood
 pipe = CogVideoXPipeline.from_pretrained(
     "THUDM/CogVideoX-2b",
     torch_dtype=torch.float16
-).to("cuda")
+)
+
+pipe.enable_model_cpu_offload()
 
 prompt_embeds, _ = pipe.encode_prompt(
     prompt=prompt,
