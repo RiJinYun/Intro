@@ -76,7 +76,7 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 | Model Name    | CogVideoX-2B (当前仓库) | 
 |---------------|---------------------|
 | 提示词语言         | English             | 
-| 推理显存消耗        | 36GB（会在PR合并之前优化)    | 
+| 推理显存消耗        | 36GB                | 
 | 微调显存消耗 (bs=1) | 42GB                |
 | 提示词长度上限       | 226 Tokens          |
 | 视频生成长度        | 6 seconds           | 
@@ -97,8 +97,7 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 1. 安装对应的依赖
 
 ```shell
-pip install --upgrade opencv-python transformers acc
-pip install git+https://github.com/huggingface/diffusers.git@878f609aa5ce4a78fea0f048726889debde1d7e8#egg=diffusers # Still in PR
+pip install --upgrade opencv-python transformers accelerate diffusers # Must using diffusers>=0.30.0
 ```
 
 2. 运行代码

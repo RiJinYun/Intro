@@ -88,18 +88,18 @@ inference: false
 CogVideoX is an open-source video generation model that shares the same origins as [清影](https://chatglm.cn/video).
 The table below provides a list of the video generation models we currently offer, along with their basic information.
 
-| Model Name                                 | CogVideoX-2B (Current Repos)                  | 
-|--------------------------------------------|-----------------------------------------------|
-| Supported Prompt Language                  | English                                       | 
-| GPU Memory Required for Inference          | 36GB (will be optimized before the PR is merged) | 
-| GPU Memory Required for Fine-tuning (bs=1) | 42GB                                          |
-| Prompt Length                              | 226 Tokens                                    |
-| Video Length                               | 6 seconds                                     | 
-| Frames Per Second                          | 8 frames                                      | 
-| Resolution                                 | 720 * 480                                     |
-| Positional Embeddings                      | Sinusoidal                                    |
-| Quantized Inference                        | Not Supported                                 |
-| Multi-card Inference                       | Not Supported                                 |
+| Model Name                                 | CogVideoX-2B (Current Repos) | 
+|--------------------------------------------|------------------------------|
+| Supported Prompt Language                  | English                      | 
+| GPU Memory Required for Inference          | 36GB                         | 
+| GPU Memory Required for Fine-tuning (bs=1) | 42GB                         |
+| Prompt Length                              | 226 Tokens                   |
+| Video Length                               | 6 seconds                    | 
+| Frames Per Second                          | 8 frames                     | 
+| Resolution                                 | 720 * 480                    |
+| Positional Embeddings                      | Sinusoidal                   |
+| Quantized Inference                        | Not Supported                |
+| Multi-card Inference                       | Not Supported                |
 
 **Note** Using [SAT](https://github.com/THUDM/SwissArmyTransformer) model cost 18GB for inference. Check our github.
 
@@ -113,8 +113,7 @@ optimizations and conversions to get a better experience.**
 1. Install the required dependencies
 
 ```shell
-pip install --upgrade opencv-python transformers 
-pip install git+https://github.com/huggingface/diffusers.git@878f609aa5ce4a78fea0f048726889debde1d7e8#egg=diffusers # Still in PR
+pip install --upgrade opencv-python transformers diffusers # Must using diffusers>=0.30.0
 ```
 
 2. Run the code
