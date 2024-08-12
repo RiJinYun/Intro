@@ -3,12 +3,11 @@ license: other
 license_name: cogvideox
 license_link: https://huggingface.co/THUDM/CogVideoX-2b/blob/main/LICENSE
 language:
-  - en
+- pt
 tags:
-  - cogvideox
-  - video-generation
-  - thudm
-  - text-to-video
+- cogvideox
+- video-generation
+- thudm
 inference: false
 ---
 
