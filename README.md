@@ -20,8 +20,8 @@ inference: false
   </div>
   <p align="center">
   <a href="https://huggingface.co/THUDM/CogVideoX-2b/blob/main/README_zh.md">📄 中文阅读</a> | 
-  <a href="https://github.com/THUDM/CogVideo">🌐 Github(with PDF paper)</a> | 
-  <a href="#">📜 arxiv (coming soon) </a>
+  <a href="https://github.com/THUDM/CogVideo">🌐 Github </a> | 
+  <a href="https://arxiv.org/pdf/2408.06072">📜 arxiv </a>
 </p>
 
 ## Demo Show
