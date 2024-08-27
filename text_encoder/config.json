@@ -1,5 +1,5 @@
 {
-  "_name_or_path": "/share/home/zyx/Models/t5-v1_1-xxl_1",
+  "_name_or_path": "google/t5-v1_1-xxl_1",
   "architectures": [
     "T5EncoderModel"
   ],

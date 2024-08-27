@@ -6,8 +6,9 @@
   </div>
   <p align="center">
   <a href="https://huggingface.co/THUDM/CogVideoX-2b/blob/main/README.md">📄 Read in English</a> | 
-  <a href="https://github.com/THUDM/CogVideo">🌐 Github(包含PDF论文)</a> | 
-  <a href="#">📜 arxiv (即将发布) </a>
+  <a href="https://huggingface.co/spaces/THUDM/CogVideoX-2B-Space">🤗 Huggingface Space</a> |
+  <a href="https://github.com/THUDM/CogVideo">🌐 Github </a> | 
+  <a href="https://arxiv.org/pdf/2408.06072">📜 arxiv </a>
 </p>
 
 ## 作品案例
@@ -71,21 +72,91 @@
 
 ## 模型介绍
 
-CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生成模型。下表展示目前我们提供的视频生成模型列表，以及相关基础信息。
+CogVideoX是 [清影](https://chatglm.cn/video?fr=osm_cogvideo) 同源的开源版本视频生成模型。下表展示目前我们提供的视频生成模型列表，以及相关基础信息。
 
-| 模型名                 | CogVideoX-2B                         | 
-|---------------------|--------------------------------------|
-| 提示词语言               | English                              | 
-| 单GPU推理 (FP-16) 显存消耗 | 23.9GB                               | 
-| 多GPU推理 (FP-16) 显存消耗 | 20GB minimum per GPU using diffusers |                                                                                                            
-| 微调显存消耗 (bs=1)       | 42GB                                 |
-| 提示词长度上限             | 226 Tokens                           |
-| 视频长度                | 6 seconds                            | 
-| 帧率（每秒）              | 8 frames                             | 
-| 视频分辨率               | 720 * 480                            |
-| 量化推理                | 不支持                                  |          
+<table  style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th style="text-align: center;">模型名</th>
+    <th style="text-align: center;">CogVideoX-2B (本仓库)</th>
+    <th style="text-align: center;">CogVideoX-5B </th>
+  </tr>
+  <tr>
+    <td style="text-align: center;">模型介绍</td>
+    <td style="text-align: center;">入门级模型，兼顾兼容性。运行，二次开发成本低。</td>
+    <td style="text-align: center;">视频生成质量更高，视觉效果更好的更大尺寸模型。</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">推理精度</td>
+    <td style="text-align: center;"><b>FP16*(推荐)</b>, BF16, FP32，FP8*，INT8，不支持INT4</td>
+    <td style="text-align: center;"><b>BF16(推荐)</b>, FP16, FP32，FP8*，INT8，不支持INT4</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">单GPU显存消耗<br></td>
+    <td style="text-align: center;">FP16: 18GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>12.5GB* using diffusers</b><br><b>INT8: 7.8GB* using diffusers</b></td>
+    <td style="text-align: center;">BF16: 26GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>20.7GB* using diffusers</b><br><b>INT8: 11.4GB* using diffusers</b></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">多GPU推理显存消耗</td>
+    <td style="text-align: center;"><b>FP16: 10GB* using diffusers</b><br></td>
+    <td style="text-align: center;"><b>BF16: 15GB* using diffusers</b><br></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">推理速度<br>(Step = 50, FP/BF16)</td>
+    <td style="text-align: center;">单卡A100: ~90秒<br>单卡H100: ~45秒</td>
+    <td style="text-align: center;">单卡A100: ~180秒<br>单卡H100: ~90秒</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">微调精度</td>
+    <td style="text-align: center;"><b>FP16</b></td>
+    <td style="text-align: center;"><b>BF16</b></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">微调显存消耗(每卡)</td>
+    <td style="text-align: center;">47 GB (bs=1, LORA)<br> 61 GB (bs=2, LORA)<br> 62GB (bs=1, SFT)</td>
+    <td style="text-align: center;">63 GB (bs=1, LORA)<br> 80 GB (bs=2, LORA)<br> 75GB (bs=1, SFT)<br></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">提示词语言</td>
+    <td colspan="2" style="text-align: center;">English*</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">提示词长度上限</td>
+    <td colspan="2" style="text-align: center;">226 Tokens</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">视频长度</td>
+    <td colspan="2" style="text-align: center;">6 秒</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">帧率</td>
+    <td colspan="2" style="text-align: center;">8 帧 / 秒 </td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">视频分辨率</td>
+    <td colspan="2" style="text-align: center;">720 * 480，不支持其他分辨率(含微调)</td>
+  </tr>
+    <tr>
+    <td style="text-align: center;">位置编码</td>
+    <td style="text-align: center;">3d_sincos_pos_embed</td>
+    <td style="text-align: center;">3d_rope_pos_embed<br></td>
+  </tr>
+</table>
 
-**Note** 使用 [SAT](https://github.com/THUDM/SwissArmyTransformer) 推理SAT版本模型仅需18G显存。欢迎前往我们的github查看。
+**数据解释**
+
++ 使用 diffusers 库进行测试时，启用了 `enable_model_cpu_offload()` 选项 和 `pipe.vae.enable_tiling()` 优化，该方案未测试在非
+  **NVIDIA A100 / H100** 外的设备上的实际显存 / 内存占用。通常，该方案可以适配于所有 **NVIDIA 安培架构**
+  以上的设备。若关闭优化，显存占用会成倍增加，峰值显存约为表格的3倍。
++ 多GPU推理时，需要关闭 `enable_model_cpu_offload()` 优化。
++ 使用 INT8 模型会导致推理速度降低，此举是为了满足显存较低的显卡能正常推理并保持较少的视频质量损失，推理速度大幅降低。
++ 2B 模型采用 `FP16` 精度训练， 5B模型采用 `BF16` 精度训练。我们推荐使用模型训练的精度进行推理。
++ `FP8` 精度必须在`NVIDIA H100` 及以上的设备上使用，需要源代码安装`torch`,`torchao`,`diffusers`,`accelerate` python包，推荐使用 `CUDA 12.4`。
++ 推理速度测试同样采用了上述显存优化方案，不采用显存优化的情况下，推理速度提升约10%。 只有`diffusers`版本模型支持量化。
++ 模型仅支持英语输入，其他语言可以通过大模型润色时翻译为英语。
+
+**提醒**
+
++ 使用 [SAT](https://github.com/THUDM/SwissArmyTransformer) 推理和微调SAT版本模型。欢迎前往我们的github查看。
 
 ## 快速上手 🤗
 
@@ -96,10 +167,14 @@ CogVideoX是 [清影](https://chatglm.cn/video) 同源的开源版本视频生�
 1. 安装对应的依赖
 
 ```shell
-pip install --upgrade opencv-python transformers accelerate diffusers # Must using diffusers>=0.30.0
+# diffusers>=0.30.1
+# transformers>=0.44.0
+# accelerate>=0.33.0 (suggest install from source)
+# imageio-ffmpeg>=0.5.1
+pip install --upgrade transformers accelerate diffusers imageio-ffmpeg 
 ```
 
-2. 运行代码
+2. 运行代码 (BF16 / FP16)
 
 ```python
 import torch
@@ -114,28 +189,19 @@ pipe = CogVideoXPipeline.from_pretrained(
 )
 
 pipe.enable_model_cpu_offload()
-
-prompt_embeds, _ = pipe.encode_prompt(
-    prompt=prompt,
-    do_classifier_free_guidance=True,
-    num_videos_per_prompt=1,
-    max_sequence_length=226,
-    device="cuda",
-    dtype=torch.float16,
-)
+pipe.vae.enable_tiling()
 
 video = pipe(
+    prompt=prompt,
+    num_videos_per_prompt=1,
     num_inference_steps=50,
+    num_frames=49,
     guidance_scale=6,
-    prompt_embeds=prompt_embeds,
+    generator=torch.Generator(device="cuda").manual_seed(42),
 ).frames[0]
 
 export_to_video(video, "output.mp4", fps=8)
 ```
-
-**使用单卡A100按照上述配置生成一次视频大约需要90秒**。
-
-如果您生成的模型在 MAC 默认播放器上表现为 "全绿" 无法正常观看，属于正常现象 (OpenCV保存视频问题)，仅需更换一个播放器观看。
 
 ## 深入研究
 
@@ -146,11 +212,22 @@ export_to_video(video, "output.mp4", fps=8)
 3. SAT版本模型进行推理和微调，甚至预发布。
 4. 项目更新日志动态，更多互动机会。
 5. CogVideoX 工具链，帮助您更好的使用模型。
+6. INT8 模型推理代码。
 
 ## 模型协议
 
-该模型根据 [CogVideoX LICENSE](LICENSE) 许可证发布。
+CogVideoX-2B 模型 (包括其对应的Transformers模块，VAE模块) 根据 [Apache 2.0 License](LICENSE) 许可证发布。
+
+CogVideoX-5B 模型 (Transformers 模块) 根据 [CogVideoX LICENSE](https://huggingface.co/THUDM/CogVideoX-5b/blob/main/LICENSE)
+许可证发布。
 
 ## 引用
 
-技术报告仍在撰写中，敬请期待
+```
+@article{yang2024cogvideox,
+  title={CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer},
+  author={Yang, Zhuoyi and Teng, Jiayan and Zheng, Wendi and Ding, Ming and Huang, Shiyu and Xu, Jiazheng and Yang, Yuanming and Hong, Wenyi and Zhang, Xiaohan and Feng, Guanyu and others},
+  journal={arXiv preprint arXiv:2408.06072},
+  year={2024}
+}
+```

@@ -20,6 +20,7 @@ inference: false
   </div>
   <p align="center">
   <a href="https://huggingface.co/THUDM/CogVideoX-2b/blob/main/README_zh.md">📄 中文阅读</a> | 
+  <a href="https://huggingface.co/spaces/THUDM/CogVideoX-2B-Space">🤗 Huggingface Space</a> |
   <a href="https://github.com/THUDM/CogVideo">🌐 Github </a> | 
   <a href="https://arxiv.org/pdf/2408.06072">📜 arxiv </a>
 </p>
@@ -85,22 +86,91 @@ inference: false
 
 ## Model Introduction
 
-CogVideoX is an open-source video generation model that shares the same origins as [清影](https://chatglm.cn/video).
-The table below provides a list of the video generation models we currently offer, along with their basic information.
+CogVideoX is an open-source version of the video generation model originating from [QingYing](https://chatglm.cn/video?fr=osm_cogvideo). The table below displays the list of video generation models we currently offer, along with their foundational information.
 
-| Model Name                                | CogVideoX-2B                         | 
-|-------------------------------------------|--------------------------------------|
-| Prompt Language                           | English                              | 
-| Single GPU  Inference (FP16)              | 23.9GB                               | 
-| Multi GPUs Inference (FP16)               | 20GB minimum per GPU using diffusers |
-| GPU Memory Required for Fine-tuning(bs=1) | 40GB                                 |
-| Prompt Max  Length                        | 226 Tokens                           |
-| Video Length                              | 6 seconds                            | 
-| Frames Per Second                         | 8 frames                             | 
-| Resolution                                | 720 * 480                            |
-| Quantized Inference                       | Not Supported                        |          
+<table style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th style="text-align: center;">Model Name</th>
+    <th style="text-align: center;">CogVideoX-2B (This Repository)</th>
+    <th style="text-align: center;">CogVideoX-5B </th>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Model Description</td>
+    <td style="text-align: center;">Entry-level model, balancing compatibility. Low cost for running and secondary development.</td>
+    <td style="text-align: center;">Larger model with higher video generation quality and better visual effects.</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Inference Precision</td>
+    <td style="text-align: center;"><b>FP16* (Recommended)</b>, BF16, FP32, FP8*, INT8, no support for INT4</td>
+    <td style="text-align: center;"><b>BF16 (Recommended)</b>, FP16, FP32, FP8*, INT8, no support for INT4</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Single GPU VRAM Consumption</td>
+    <td style="text-align: center;">FP16: 18GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>12.5GB* using diffusers</b><br><b>INT8: 7.8GB* using diffusers</b></td>
+    <td style="text-align: center;">BF16: 26GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>20.7GB* using diffusers</b><br><b>INT8: 11.4GB* using diffusers</b></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Multi-GPU Inference VRAM Consumption</td>
+    <td style="text-align: center;"><b>FP16: 10GB* using diffusers</b></td>
+    <td style="text-align: center;"><b>BF16: 15GB* using diffusers</b></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Inference Speed<br>(Step = 50, FP/BF16)</td>
+    <td style="text-align: center;">Single A100: ~90 seconds<br>Single H100: ~45 seconds</td>
+    <td style="text-align: center;">Single A100: ~180 seconds<br>Single H100: ~90 seconds</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Fine-tuning Precision</td>
+    <td style="text-align: center;"><b>FP16</b></td>
+    <td style="text-align: center;"><b>BF16</b></td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Fine-tuning VRAM Consumption (per GPU)</td>
+    <td style="text-align: center;">47 GB (bs=1, LORA)<br> 61 GB (bs=2, LORA)<br> 62GB (bs=1, SFT)</td>
+    <td style="text-align: center;">63 GB (bs=1, LORA)<br> 80 GB (bs=2, LORA)<br> 75GB (bs=1, SFT)</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Prompt Language</td>
+    <td colspan="2" style="text-align: center;">English*</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Prompt Length Limit</td>
+    <td colspan="2" style="text-align: center;">226 Tokens</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Video Length</td>
+    <td colspan="2" style="text-align: center;">6 Seconds</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Frame Rate</td>
+    <td colspan="2" style="text-align: center;">8 Frames per Second</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Video Resolution</td>
+    <td colspan="2" style="text-align: center;">720 x 480, no support for other resolutions (including fine-tuning)</td>
+  </tr>
+  <tr>
+    <td style="text-align: center;">Positional Encoding</td>
+    <td style="text-align: center;">3d_sincos_pos_embed</td>
+    <td style="text-align: center;">3d_rope_pos_embed</td>
+  </tr>
+</table>
 
-**Note** Using [SAT](https://github.com/THUDM/SwissArmyTransformer) model cost 18GB for inference. Check our github.
+**Data Explanation**
+
++ When testing with the diffusers library, the `enable_model_cpu_offload()` option and `pipe.vae.enable_tiling()` optimization were enabled. This solution has not been tested on devices other than **NVIDIA A100 / H100**. Typically, this solution is adaptable to all devices above the **NVIDIA Ampere architecture**. If the optimization is disabled, memory usage will increase significantly, with peak memory being about 3 times the table value.
++ The CogVideoX-2B model was trained using `FP16` precision, so it is recommended to use `FP16` for inference.
++ For multi-GPU inference, the `enable_model_cpu_offload()` optimization needs to be disabled.
++ Using the INT8 model will lead to reduced inference speed. This is done to allow low-memory GPUs to perform inference while maintaining minimal video quality loss, though the inference speed will be significantly reduced.
++ Inference speed tests also used the memory optimization mentioned above. Without memory optimization, inference speed increases by approximately 10%. Only the `diffusers` version of the model supports quantization.
++ The model only supports English input; other languages can be translated to English for refinement by large models.
+
+**Note**
+
++ Using [SAT](https://github.com/THUDM/SwissArmyTransformer)  for inference and fine-tuning of SAT version
+  models. Feel free to visit our GitHub for more information.
+
+
 
 ## Quick Start 🤗
 
@@ -112,7 +182,11 @@ optimizations and conversions to get a better experience.**
 1. Install the required dependencies
 
 ```shell
-pip install --upgrade opencv-python transformers diffusers # Must using diffusers>=0.30.0
+# diffusers>=0.30.1
+# transformers>=0.44.0
+# accelerate>=0.33.0 (suggest install from source)
+# imageio-ffmpeg>=0.5.1
+pip install --upgrade transformers accelerate diffusers imageio-ffmpeg 
 ```
 
 2. Run the code
@@ -130,29 +204,19 @@ pipe = CogVideoXPipeline.from_pretrained(
 )
 
 pipe.enable_model_cpu_offload()
-
-prompt_embeds, _ = pipe.encode_prompt(
-    prompt=prompt,
-    do_classifier_free_guidance=True,
-    num_videos_per_prompt=1,
-    max_sequence_length=226,
-    device="cuda",
-    dtype=torch.float16,
-)
+pipe.vae.enable_tiling()
 
 video = pipe(
+    prompt=prompt,
+    num_videos_per_prompt=1,
     num_inference_steps=50,
+    num_frames=49,
     guidance_scale=6,
-    prompt_embeds=prompt_embeds,
+    generator=torch.Generator(device="cuda").manual_seed(42),
 ).frames[0]
 
 export_to_video(video, "output.mp4", fps=8)
 ```
-
-**Using a single A100 GPU, generating a video with the above configuration takes approximately 90 seconds**
-
-If the generated model appears “all green” and not viewable in the default MAC player, it is a normal phenomenon (due to
-OpenCV saving video issues). Simply use a different player to view the video.
 
 ## Explore the Model
 
@@ -163,11 +227,21 @@ Welcome to our [github](https://github.com/THUDM/CogVideo), where you will find:
 3. Reasoning and fine-tuning of SAT version models, and even pre-release.
 4. Project update log dynamics, more interactive opportunities.
 5. CogVideoX toolchain to help you better use the model.
+6. INT8 model inference code support.
 
 ## Model License
 
-This model is released under the [CogVideoX LICENSE](LICENSE).
+The CogVideoX-2B model (including its corresponding Transformers module and VAE module) is released under the [Apache 2.0 License](LICENSE).
+
+The CogVideoX-5B model (Transformers module) is released under the [CogVideoX LICENSE](https://huggingface.co/THUDM/CogVideoX-5b/blob/main/LICENSE).
 
 ## Citation
 
-The technical report is still being written, stay tuned.
+```
+@article{yang2024cogvideox,
+  title={CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer},
+  author={Yang, Zhuoyi and Teng, Jiayan and Zheng, Wendi and Ding, Ming and Huang, Shiyu and Xu, Jiazheng and Yang, Yuanming and Hong, Wenyi and Zhang, Xiaohan and Feng, Guanyu and others},
+  journal={arXiv preprint arXiv:2408.06072},
+  year={2024}
+}
+```
