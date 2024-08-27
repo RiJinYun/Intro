@@ -1,14 +1,12 @@
 ---
-license: other
-license_name: cogvideox
-license_link: https://huggingface.co/THUDM/CogVideoX-2b/blob/main/LICENSE
+license: apache-2.0
 language:
-  - en
+- en
 tags:
-  - cogvideox
-  - video-generation
-  - thudm
-  - text-to-video
+- cogvideox
+- video-generation
+- thudm
+- text-to-video
 inference: false
 ---
 
