@@ -86,13 +86,13 @@ inference: false
 
 ## Model Introduction
 
-CogVideoX is an open-source version of the video generation model originating from [QingYing](https://chatglm.cn/video?fr=osm_cogvideo). The table below displays the list of video generation models we currently offer, along with their foundational information.
+CogVideoX is an open-source version of the video generation model originating from [QingYing](https://chatglm.cn/video?lang=en?fr=osm_cogvideo). The table below displays the list of video generation models we currently offer, along with their foundational information.
 
 <table style="border-collapse: collapse; width: 100%;">
   <tr>
     <th style="text-align: center;">Model Name</th>
     <th style="text-align: center;">CogVideoX-2B (This Repository)</th>
-    <th style="text-align: center;">CogVideoX-5B </th>
+    <th style="text-align: center;">CogVideoX-5B</th>
   </tr>
   <tr>
     <td style="text-align: center;">Model Description</td>
@@ -106,8 +106,8 @@ CogVideoX is an open-source version of the video generation model originating fr
   </tr>
   <tr>
     <td style="text-align: center;">Single GPU VRAM Consumption</td>
-    <td style="text-align: center;">FP16: 18GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>12.5GB* using diffusers</b><br><b>INT8: 7.8GB* using diffusers</b></td>
-    <td style="text-align: center;">BF16: 26GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>20.7GB* using diffusers</b><br><b>INT8: 11.4GB* using diffusers</b></td>
+    <td style="text-align: center;">FP16: 18GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>12.5GB* using diffusers</b><br><b>INT8: 7.8GB* using diffusers with torchao</b></td>
+    <td style="text-align: center;">BF16: 26GB using <a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> / <b>20.7GB* using diffusers</b><br><b>INT8: 11.4GB* using diffusers with torchao</b></td>
   </tr>
   <tr>
     <td style="text-align: center;">Multi-GPU Inference VRAM Consumption</td>
@@ -217,6 +217,61 @@ video = pipe(
 
 export_to_video(video, "output.mp4", fps=8)
 ```
+
+## Quantized Inference
+
+[PytorchAO](https://github.com/pytorch/ao) and [Optimum-quanto](https://github.com/huggingface/optimum-quanto/) can be used to quantize the Text Encoder, Transformer and VAE modules to lower the memory requirement of CogVideoX. This makes it possible to run the model on free-tier T4 Colab or smaller VRAM GPUs as well! It is also worth noting that TorchAO quantization is fully compatible with `torch.compile`, which allows for much faster inference speed.
+
+```diff
+# To get started, PytorchAO needs to be installed from the GitHub source and PyTorch Nightly.
+# Source and nightly installation is only required until next release.
+
+import torch
+from diffusers import AutoencoderKLCogVideoX, CogVideoXTransformer3DModel, CogVideoXPipeline
+from diffusers.utils import export_to_video
++ from transformers import T5EncoderModel
++ from torchao.quantization import quantize_, int8_weight_only, int8_dynamic_activation_int8_weight
+
++ quantization = int8_weight_only
+
++ text_encoder = T5EncoderModel.from_pretrained("THUDM/CogVideoX-5b", subfolder="text_encoder", torch_dtype=torch.bfloat16)
++ quantize_(text_encoder, quantization())
+
++ transformer = CogVideoXTransformer3DModel.from_pretrained("THUDM/CogVideoX-5b", subfolder="transformer", torch_dtype=torch.bfloat16)
++ quantize_(transformer, quantization())
+
++ vae = AutoencoderKLCogVideoX.from_pretrained("THUDM/CogVideoX-2b", subfolder="vae", torch_dtype=torch.bfloat16)
++ quantize_(vae, quantization())
+
+# Create pipeline and run inference
+pipe = CogVideoXPipeline.from_pretrained(
+    "THUDM/CogVideoX-2b",
++    text_encoder=text_encoder,
++    transformer=transformer,
++    vae=vae,
+    torch_dtype=torch.bfloat16,
+)
+pipe.enable_model_cpu_offload()
+pipe.vae.enable_tiling()
+
+prompt = "A panda, dressed in a small, red jacket and a tiny hat, sits on a wooden stool in a serene bamboo forest. The panda's fluffy paws strum a miniature acoustic guitar, producing soft, melodic tunes. Nearby, a few other pandas gather, watching curiously and some clapping in rhythm. Sunlight filters through the tall bamboo, casting a gentle glow on the scene. The panda's face is expressive, showing concentration and joy as it plays. The background includes a small, flowing stream and vibrant green foliage, enhancing the peaceful and magical atmosphere of this unique musical performance."
+
+video = pipe(
+    prompt=prompt,
+    num_videos_per_prompt=1,
+    num_inference_steps=50,
+    num_frames=49,
+    guidance_scale=6,
+    generator=torch.Generator(device="cuda").manual_seed(42),
+).frames[0]
+
+export_to_video(video, "output.mp4", fps=8)
+```
+
+Additionally, the models can be serialized and stored in a quantized datatype to save disk space when using PytorchAO. Find examples and benchmarks at these links:
+- [torchao](https://gist.github.com/a-r-r-o-w/4d9732d17412888c885480c6521a9897)
+- [quanto](https://gist.github.com/a-r-r-o-w/31be62828b00a9292821b85c1017effa)
+
 
 ## Explore the Model
 

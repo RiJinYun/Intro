@@ -150,7 +150,8 @@ CogVideoX是 [清影](https://chatglm.cn/video?fr=osm_cogvideo) 同源的开源�
 + 多GPU推理时，需要关闭 `enable_model_cpu_offload()` 优化。
 + 使用 INT8 模型会导致推理速度降低，此举是为了满足显存较低的显卡能正常推理并保持较少的视频质量损失，推理速度大幅降低。
 + 2B 模型采用 `FP16` 精度训练， 5B模型采用 `BF16` 精度训练。我们推荐使用模型训练的精度进行推理。
-+ `FP8` 精度必须在`NVIDIA H100` 及以上的设备上使用，需要源代码安装`torch`,`torchao`,`diffusers`,`accelerate` python包，推荐使用 `CUDA 12.4`。
++ `FP8` 精度必须在`NVIDIA H100` 及以上的设备上使用，需要源代码安装`torch`,`torchao`,`diffusers`,`accelerate`
+  python包，推荐使用 `CUDA 12.4`。
 + 推理速度测试同样采用了上述显存优化方案，不采用显存优化的情况下，推理速度提升约10%。 只有`diffusers`版本模型支持量化。
 + 模型仅支持英语输入，其他语言可以通过大模型润色时翻译为英语。
 
@@ -203,6 +204,63 @@ video = pipe(
 export_to_video(video, "output.mp4", fps=8)
 ```
 
+## Quantized Inference
+
+[PytorchAO](https://github.com/pytorch/ao) 和 [Optimum-quanto](https://github.com/huggingface/optimum-quanto/)
+可以用于对文本编码器、Transformer 和 VAE 模块进行量化，从而降低 CogVideoX 的内存需求。这使得在免费的 T4 Colab 或较小 VRAM 的
+GPU 上运行该模型成为可能！值得注意的是，TorchAO 量化与 `torch.compile` 完全兼容，这可以显著加快推理速度。
+
+```diff
+# To get started, PytorchAO needs to be installed from the GitHub source and PyTorch Nightly.
+# Source and nightly installation is only required until next release.
+
+import torch
+from diffusers import AutoencoderKLCogVideoX, CogVideoXTransformer3DModel, CogVideoXPipeline
+from diffusers.utils import export_to_video
++ from transformers import T5EncoderModel
++ from torchao.quantization import quantize_, int8_weight_only, int8_dynamic_activation_int8_weight
+
++ quantization = int8_weight_only
+
++ text_encoder = T5EncoderModel.from_pretrained("THUDM/CogVideoX-2b", subfolder="text_encoder", torch_dtype=torch.bfloat16)
++ quantize_(text_encoder, quantization())
+
++ transformer = CogVideoXTransformer3DModel.from_pretrained("THUDM/CogVideoX-5b", subfolder="transformer", torch_dtype=torch.bfloat16)
++ quantize_(transformer, quantization())
+
++ vae = AutoencoderKLCogVideoX.from_pretrained("THUDM/CogVideoX-2b", subfolder="vae", torch_dtype=torch.bfloat16)
++ quantize_(vae, quantization())
+
+# Create pipeline and run inference
+pipe = CogVideoXPipeline.from_pretrained(
+    "THUDM/CogVideoX-2b",
++    text_encoder=text_encoder,
++    transformer=transformer,
++    vae=vae,
+    torch_dtype=torch.bfloat16,
+)
+pipe.enable_model_cpu_offload()
+pipe.vae.enable_tiling()
+
+prompt = "A panda, dressed in a small, red jacket and a tiny hat, sits on a wooden stool in a serene bamboo forest. The panda's fluffy paws strum a miniature acoustic guitar, producing soft, melodic tunes. Nearby, a few other pandas gather, watching curiously and some clapping in rhythm. Sunlight filters through the tall bamboo, casting a gentle glow on the scene. The panda's face is expressive, showing concentration and joy as it plays. The background includes a small, flowing stream and vibrant green foliage, enhancing the peaceful and magical atmosphere of this unique musical performance."
+
+video = pipe(
+    prompt=prompt,
+    num_videos_per_prompt=1,
+    num_inference_steps=50,
+    num_frames=49,
+    guidance_scale=6,
+    generator=torch.Generator(device="cuda").manual_seed(42),
+).frames[0]
+
+export_to_video(video, "output.mp4", fps=8)
+```
+
+此外，这些模型可以通过使用PytorchAO以量化数据类型序列化并存储，从而节省磁盘空间。你可以在以下链接中找到示例和基准测试。
+
+- [torchao](https://gist.github.com/a-r-r-o-w/4d9732d17412888c885480c6521a9897)
+- [quanto](https://gist.github.com/a-r-r-o-w/31be62828b00a9292821b85c1017effa)
+
 ## 深入研究
 
 欢迎进入我们的 [github](https://github.com/THUDM/CogVideo)，你将获得：
@@ -218,7 +276,8 @@ export_to_video(video, "output.mp4", fps=8)
 
 CogVideoX-2B 模型 (包括其对应的Transformers模块，VAE模块) 根据 [Apache 2.0 License](LICENSE) 许可证发布。
 
-CogVideoX-5B 模型 (Transformers 模块) 根据 [CogVideoX LICENSE](https://huggingface.co/THUDM/CogVideoX-5b/blob/main/LICENSE)
+CogVideoX-5B 模型 (Transformers 模块)
+根据 [CogVideoX LICENSE](https://huggingface.co/THUDM/CogVideoX-5b/blob/main/LICENSE)
 许可证发布。
 
 ## 引用
