@@ -95,7 +95,7 @@ CogVideoX是 [清影](https://chatglm.cn/video?fr=osm_cogvideo) 同源的开源�
   </tr>
   <tr>
     <td style="text-align: center;">单GPU显存消耗<br></td>
-    <td style="text-align: center;"><a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> FP16: 18GB <br><b>diffusers BF16: 4GB起* </b><br><b>diffusers INT8(torchao): 3.6G起*</b></td>
+    <td style="text-align: center;"><a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> FP16: 18GB <br><b>diffusers FP16: 4GB起* </b><br><b>diffusers INT8(torchao): 3.6G起*</b></td>
     <td style="text-align: center;"><a href="https://github.com/THUDM/SwissArmyTransformer">SAT</a> BF16: 26GB <br><b>diffusers BF16 : 5GB起* </b><br><b>diffusers INT8(torchao): 4.4G起* </b></td>
   </tr>
   <tr>
