@@ -1,6 +1,6 @@
 {
   "_class_name": "AutoencoderKLCogVideoX",
-  "_diffusers_version": "0.30.0.dev0",
+  "_diffusers_version": "0.32.0.dev0",
   "act_fn": "silu",
   "block_out_channels": [
     128,
@@ -35,5 +35,6 @@
     "CogVideoXUpBlock3D"
   ],
   "use_post_quant_conv": false,
-  "use_quant_conv": false
+  "use_quant_conv": false,
+  "invert_scale_latents": false
 }
