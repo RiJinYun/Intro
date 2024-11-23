@@ -25,7 +25,7 @@
   "out_channels": 3,
   "sample_height": 480,
   "sample_width": 720,
-  "scaling_factor": 0.7,
+  "scaling_factor": 1.15258426,
   "shift_factor": null,
   "temporal_compression_ratio": 4,
   "up_block_types": [
