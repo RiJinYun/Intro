@@ -36,5 +36,5 @@
   ],
   "use_post_quant_conv": false,
   "use_quant_conv": false,
-  "invert_scale_latents": true
+  "invert_scale_latents": false
 }
